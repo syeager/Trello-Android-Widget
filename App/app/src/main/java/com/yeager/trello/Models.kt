@@ -1,7 +1,5 @@
 package com.yeager.trello
 
-import kotlinx.serialization.Serializable
-
 @Serializable
 data class TrelloBoard(val id: String, val name: String)
 
