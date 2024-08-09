@@ -25,7 +25,7 @@ jobs:
       - name: Build with Gradle
         run: gradle build -p ./App
       - name: Release
-        uses: fnkr/github-action-ghr@v1.3
-        env:
-          GHR_PATH: build/outputs/apk/debug
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "App/app/build/outputs/apk/debug/*.apk"
+          tag: $(date +'%Y-%m-%d')
