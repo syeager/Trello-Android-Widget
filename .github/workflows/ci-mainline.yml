@@ -18,6 +18,7 @@ jobs:
       - run: ls $GITHUB_WORKSPACE
       - name: Setup JDK
         uses: actions/setup-java@v4.2.2
+        distribution: jdk
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Download dependencies
