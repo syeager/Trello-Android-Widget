@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-java@v4.2.2
         with:
           distribution: jdk
+          java-version: 11
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Download dependencies
