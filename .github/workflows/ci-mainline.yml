@@ -15,7 +15,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout Source
         uses: actions/checkout@v4
-      - run: ls $GITHUB_WORKSPACE
       - name: Setup JDK
         uses: actions/setup-java@v4.2.2
         with:
@@ -24,9 +23,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Download dependencies
-        run: ./gradlew dependencies
+        run: $GITHUB_WORKSPACE/App/gradlew dependencies
       - name: Build with Gradle
-        run: $GITHUB_WORKSPACE/gradlew build
+        run: $GITHUB_WORKSPACE/App/gradlew build
       - name: Release
         uses: fnkr/github-action-ghr@v1.3
         env:
