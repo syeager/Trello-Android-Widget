@@ -23,7 +23,7 @@ jobs:
       - name: Setup Android SDK Tools
         uses: android-actions/setup-android@v3.2.1
       - name: Build with Gradle
-        uses: gradle/actions@v4.0.0
+        run: gradle build
       - name: Release
         uses: fnkr/github-action-ghr@v1.3
         env:
