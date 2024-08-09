@@ -28,5 +28,6 @@ jobs:
       - name: Release
         uses: ncipollo/release-action@v1
         with:
+          allowUpdates: true
           artifacts: "App/app/build/outputs/apk/debug/*.apk"
-          tag: $(date +'%Y-%m-%d')
+          tag: "debug"
