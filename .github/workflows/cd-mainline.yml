@@ -1,8 +1,8 @@
-name: CI
+name: CD
 
 on:
-  pull_request:
-    branches: ["*"]
+  push:
+    branches: [ "main" ]
   workflow_dispatch:
 jobs:
   build:
@@ -21,3 +21,9 @@ jobs:
         uses: android-actions/setup-android@v3.2.1
       - name: Build with Gradle
         run: gradle build -p ./App
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "App/app/build/outputs/apk/debug/*.apk"
+          tag: "debug"
