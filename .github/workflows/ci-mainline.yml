@@ -15,13 +15,13 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout Source
         uses: actions/checkout@v4
-      - name: Setup Android SDK Tools
-        uses: android-actions/setup-android@v3.2.1
       - name: Setup JDK
         uses: actions/setup-java@v4.2.2
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '22'
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v3.2.1
       - name: Build with Gradle
         run: $GITHUB_WORKSPACE/App/gradlew build
       - name: Release
