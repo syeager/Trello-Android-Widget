@@ -13,8 +13,12 @@ jobs:
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
-      - uses: gradle/gradle-build-action@v3.5.0
+      - name: Checkout Source
+        uses: actions/checkout@v4
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build with Gradle
+        run: ./gradlew build
       - name: Release
         uses: fnkr/github-action-ghr@v1.3
         env:
