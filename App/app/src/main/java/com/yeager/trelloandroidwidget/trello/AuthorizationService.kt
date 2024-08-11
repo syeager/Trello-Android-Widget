@@ -9,14 +9,16 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.yeager.trelloandroidwidget.BuildConfig
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 private val TOKEN = stringPreferencesKey("token")
 
 class AuthorizationService {
-    fun openAuthPage(context: Context, key: String) {
-        val url = "https://api.trello.com/1/authorize?key=$key"
+    fun openAuthPage(context: Context) {
+        val apiKey = BuildConfig.TRELLO_API_KEY
+        val url = "https://api.trello.com/1/authorize?key=$apiKey&expiration=never&response_type=token"
         val i = Intent(Intent.ACTION_VIEW)
         i.setData(Uri.parse(url))
         startActivity(context, i, null)
