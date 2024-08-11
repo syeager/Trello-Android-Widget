@@ -19,6 +19,12 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField(
+            "String",
+            "TRELLO_API_KEY",
+            providers.environmentVariable("TRELLO_API_KEY").get(),
+        )
     }
 
     buildTypes {
@@ -40,6 +46,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
