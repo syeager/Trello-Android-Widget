@@ -21,6 +21,8 @@ jobs:
         uses: android-actions/setup-android@v3.2.1
       - name: Build with Gradle
         run: gradle build -p ./App
+        env:
+          TRELLO_API_KEY: ${{secrets.TRELLO_API_KEY}}
       - name: Release
         uses: ncipollo/release-action@v1
         with:
