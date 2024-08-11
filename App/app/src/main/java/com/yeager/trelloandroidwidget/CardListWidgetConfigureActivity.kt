@@ -19,6 +19,7 @@ class CardListWidgetConfigureActivity : Activity() {
     private val authorizationService = AuthorizationService()
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var binding: CardListWidgetConfigureBinding
+    private lateinit var context: Context
 
     private val onStartAuthClicked = View.OnClickListener {
         authorizationService.openAuthPage(this)
@@ -27,13 +28,15 @@ class CardListWidgetConfigureActivity : Activity() {
     private val onSaveClicked = View.OnClickListener {
         val token = binding.userTokenText.text.toString()
         CoroutineScope(Dispatchers.IO).launch {
-            authorizationService.saveToken(this@CardListWidgetConfigureActivity, token)
+            authorizationService.saveToken(context, token)
             finish()
         }
     }
 
     public override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
+
+        context = this
 
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if the user presses the back button.
@@ -44,7 +47,7 @@ class CardListWidgetConfigureActivity : Activity() {
 
         runBlocking {
             launch {
-                val token = authorizationService.loadToken(this@CardListWidgetConfigureActivity)
+                val token = authorizationService.loadToken(context)
                 if (token == null) {
                     binding.authLayout.visibility = View.VISIBLE
                     binding.configureLayout.visibility = View.GONE
