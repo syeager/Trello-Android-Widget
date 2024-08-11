@@ -5,7 +5,6 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
 import com.yeager.trelloandroidwidget.databinding.CardListWidgetConfigureBinding
 import com.yeager.trelloandroidwidget.trello.AuthorizationService
 import kotlinx.coroutines.CoroutineScope
@@ -19,6 +18,7 @@ import kotlinx.coroutines.runBlocking
 class CardListWidgetConfigureActivity : Activity() {
     private val authorizationService = AuthorizationService()
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+    private lateinit var binding: CardListWidgetConfigureBinding
 
     private val onStartAuthClicked = View.OnClickListener {
         authorizationService.openAuthPage(this)
@@ -31,7 +31,6 @@ class CardListWidgetConfigureActivity : Activity() {
             finish()
         }
     }
-    private lateinit var binding: CardListWidgetConfigureBinding
 
     public override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
@@ -43,19 +42,18 @@ class CardListWidgetConfigureActivity : Activity() {
         binding = CardListWidgetConfigureBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val startAuthButton = binding.startAuthButton
-        val saveTokenButton = binding.saveTokenButton
-
         runBlocking {
             launch {
                 val token = authorizationService.loadToken(this@CardListWidgetConfigureActivity)
                 if (token == null) {
-                    startAuthButton.setOnClickListener(onStartAuthClicked)
-                    saveTokenButton.setOnClickListener(onSaveClicked)
+                    binding.authLayout.visibility = View.VISIBLE
+                    binding.configureLayout.visibility = View.GONE
+
+                    binding.startAuthButton.setOnClickListener(onStartAuthClicked)
+                    binding.saveTokenButton.setOnClickListener(onSaveClicked)
                 } else {
-                    startAuthButton.visibility = View.GONE
-                    saveTokenButton.visibility = View.GONE
-                    binding.userTokenText.visibility = View.GONE
+                    binding.authLayout.visibility = View.GONE
+                    binding.configureLayout.visibility = View.VISIBLE
                 }
             }
         }

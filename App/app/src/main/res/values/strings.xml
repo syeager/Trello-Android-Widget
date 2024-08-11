@@ -7,4 +7,5 @@
     <string name="start_auth">Authorize</string>
     <string name="user_token_hint">Paste token here</string>
     <string name="save_button">Save</string>
+    <string name="authorize">Authorize</string>
 </resources>

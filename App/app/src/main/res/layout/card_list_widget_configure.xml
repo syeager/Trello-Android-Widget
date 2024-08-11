@@ -5,31 +5,57 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/configure_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:labelFor="@id/user_token_text"
-        android:text="@string/configure" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/user_token_text"
+        <TextView
+            android:id="@+id/configure_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/configure" />
+
+        <Spinner
+            android:id="@+id/boards_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/auth_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/user_token_hint"
-        android:inputType="text" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-    <Button
-        android:id="@+id/start_auth_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/start_auth" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:labelFor="@id/user_token_text"
+            android:text="@string/authorize" />
 
-    <Button
-        android:id="@+id/save_token_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/save_button" />
+        <EditText
+            android:id="@+id/user_token_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/user_token_hint"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/start_auth_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/start_auth" />
+
+        <Button
+            android:id="@+id/save_token_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/save_button" />
+    </LinearLayout>
 
 </LinearLayout>
