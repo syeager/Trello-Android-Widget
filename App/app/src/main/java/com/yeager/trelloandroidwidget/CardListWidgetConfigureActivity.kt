@@ -3,34 +3,33 @@ package com.yeager.trelloandroidwidget
 import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import com.yeager.trelloandroidwidget.databinding.CardListWidgetConfigureBinding
+import com.yeager.trelloandroidwidget.trello.AuthorizationService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /**
  * The configuration screen for the [CardListWidget] AppWidget.
  */
 class CardListWidgetConfigureActivity : Activity() {
+    private val authorizationService = AuthorizationService()
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
-    private lateinit var appWidgetText: EditText
-    private var onClickListener = View.OnClickListener {
-        val context = this@CardListWidgetConfigureActivity
 
-        // When the button is clicked, store the string locally
-        val widgetText = appWidgetText.text.toString()
-        saveTitlePref(context, appWidgetId, widgetText)
+    private val onStartAuthClicked = View.OnClickListener {
+        authorizationService.openAuthPage(this)
+    }
 
-        // It is the responsibility of the configuration activity to update the app widget
-        val appWidgetManager = AppWidgetManager.getInstance(context)
-        updateAppWidget(context, appWidgetManager, appWidgetId)
-
-        // Make sure we pass back the original appWidgetId
-        val resultValue = Intent()
-        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        setResult(RESULT_OK, resultValue)
-        finish()
+    private val onSaveClicked = View.OnClickListener {
+        val token = binding.userTokenText.text.toString()
+        CoroutineScope(Dispatchers.IO).launch {
+            authorizationService.saveToken(this@CardListWidgetConfigureActivity, token)
+            finish()
+        }
     }
     private lateinit var binding: CardListWidgetConfigureBinding
 
@@ -44,8 +43,22 @@ class CardListWidgetConfigureActivity : Activity() {
         binding = CardListWidgetConfigureBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        appWidgetText = binding.appwidgetText as EditText
-        binding.addButton.setOnClickListener(onClickListener)
+        val startAuthButton = binding.startAuthButton
+        val saveTokenButton = binding.saveTokenButton
+
+        runBlocking {
+            launch {
+                val token = authorizationService.loadToken(this@CardListWidgetConfigureActivity)
+                if (token == null) {
+                    startAuthButton.setOnClickListener(onStartAuthClicked)
+                    saveTokenButton.setOnClickListener(onSaveClicked)
+                } else {
+                    startAuthButton.visibility = View.GONE
+                    saveTokenButton.visibility = View.GONE
+                    binding.userTokenText.visibility = View.GONE
+                }
+            }
+        }
 
         // Find the widget id from the intent.
         val intent = intent
@@ -61,21 +74,11 @@ class CardListWidgetConfigureActivity : Activity() {
             finish()
             return
         }
-
-        appWidgetText.setText(loadTitlePref(this@CardListWidgetConfigureActivity, appWidgetId))
     }
-
 }
 
 private const val PREFS_NAME = "com.yeager.trelloandroidwidget.CardListWidget"
 private const val PREF_PREFIX_KEY = "appwidget_"
-
-// Write the prefix to the SharedPreferences object for this widget
-internal fun saveTitlePref(context: Context, appWidgetId: Int, text: String) {
-    val prefs = context.getSharedPreferences(PREFS_NAME, 0).edit()
-    prefs.putString(PREF_PREFIX_KEY + appWidgetId, text)
-    prefs.apply()
-}
 
 // Read the prefix from the SharedPreferences object for this widget.
 // If there is no preference saved, get the default from a resource

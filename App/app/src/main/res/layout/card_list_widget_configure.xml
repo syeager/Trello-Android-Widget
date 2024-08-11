@@ -9,20 +9,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:labelFor="@id/appwidget_text"
+        android:labelFor="@id/user_token_text"
         android:text="@string/configure" />
 
     <EditText
-        android:id="@+id/appwidget_text"
+        android:id="@+id/user_token_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="@string/user_token_hint"
         android:inputType="text" />
 
     <Button
-        android:id="@+id/add_button"
+        android:id="@+id/start_auth_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/add_widget" />
+        android:text="@string/start_auth" />
+
+    <Button
+        android:id="@+id/save_token_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_button" />
 
 </LinearLayout>
