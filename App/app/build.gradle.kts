@@ -1,15 +1,8 @@
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlinx-serialization")
 }
-
-val keystorePropertiesFile = rootProject.file("keystore.properties")
-val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "com.yeager.trelloandroidwidget"
@@ -30,7 +23,8 @@ android {
         buildConfigField(
             "String",
             "TRELLO_API_KEY",
-            keystoreProperties["TRELLO_API_KEY"].toString())
+            providers.environmentVariable("TRELLO_API_KEY").get(),
+        )
     }
 
     buildTypes {
