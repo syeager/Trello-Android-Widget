@@ -3,6 +3,8 @@ package com.yeager.trelloandroidwidget
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.RemoteViews
 
 /**
@@ -42,13 +44,14 @@ internal fun updateAppWidget(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int
 ) {
-    val state = loadState(context, appWidgetId)
+    val views = RemoteViews(context.packageName, R.layout.card_list_widget).apply {
+        val intent = Intent(context, CardListService::class.java).apply {
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+        }
 
-    val views = RemoteViews(context.packageName, R.layout.card_list_widget)
-    views.setTextViewText(
-        R.id.user_token_text,
-        "${state.boardName}:\n${state.lists.joinToString("\n") { it.name }}"
-    )
+        setRemoteAdapter(R.id.card_list, intent)
+    }
 
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }

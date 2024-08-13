@@ -25,7 +25,7 @@ internal fun saveState(context: Context, appWidgetId: Int, state: SaveState) {
 internal fun loadState(context: Context, appWidgetId: Int): SaveState {
     val prefs = context.getSharedPreferences(PREFS_NAME, 0)
     val stateData = prefs.getString(PREF_PREFIX_KEY + appWidgetId, "")!!
-    return Json.decodeFromString<SaveState>(stateData)
+    return if (stateData == "") SaveState() else Json.decodeFromString<SaveState>(stateData)
 }
 
 
