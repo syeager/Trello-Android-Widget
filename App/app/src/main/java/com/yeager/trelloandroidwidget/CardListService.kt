@@ -11,10 +11,7 @@ import com.yeager.trelloandroidwidget.trello.TrelloClient
 import com.yeager.trelloandroidwidget.trello.createTrelloClient
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDate
-import java.time.OffsetDateTime
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 class CardListService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent) =
@@ -27,16 +24,13 @@ class CardListViewsViewsFactory(
 ) : RemoteViewsService.RemoteViewsFactory {
     private val cards: ArrayList<CardViewModel> = arrayListOf()
     private lateinit var trelloClient: TrelloClient
-    private var dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS]'Z'")
 
     private val appWidgetId: Int =
         intent.getIntExtra(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         )
-
-    private var isLoading = false
-
+    
     override fun onCreate() {
         runBlocking {
             trelloClient = createTrelloClient(context, AuthorizationService())
