@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.CheckBox
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.yeager.trelloandroidwidget.databinding.CardListWidgetConfigureBinding
@@ -78,6 +79,18 @@ class CardListWidgetConfigureActivity : AppCompatActivity() {
 
                     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                         println("selected ${boards[position]}")
+
+                        lifecycleScope.launch {
+                            println("fetching lists")
+                            val lists = trelloClient.getAllListsInBoard(boards[position].id)
+                            val listLayout = binding.listLayout
+                            listLayout.removeAllViews()
+                            lists.forEach {
+                                val checkbox = CheckBox(context)
+                                checkbox.text = it.name
+                                listLayout.addView(checkbox)
+                            }
+                        }
                     }
                 }
             }
