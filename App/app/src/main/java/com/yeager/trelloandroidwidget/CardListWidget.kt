@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.widget.RemoteViews
 import android.widget.Toast
@@ -35,7 +36,9 @@ class CardListWidget : AppWidgetProvider() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == Intent.ACTION_VIEW) {
             val cardUrl: String? = intent.getStringExtra(Intent.EXTRA_TEXT)
-            Toast.makeText(context, cardUrl, Toast.LENGTH_SHORT).show()
+            val viewIntent = Intent(Intent.ACTION_VIEW, Uri.parse(cardUrl))
+            viewIntent.setFlags(FLAG_ACTIVITY_NEW_TASK)
+            context?.startActivity(viewIntent)
         }
         super.onReceive(context, intent)
     }
