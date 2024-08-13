@@ -1,5 +1,7 @@
 package com.yeager.trelloandroidwidget.trello
 
+import android.content.Context
+import com.yeager.trelloandroidwidget.BuildConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -12,6 +14,15 @@ import io.ktor.http.headers
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+
+suspend fun createTrelloClient(
+    context: Context,
+    authorizationService: AuthorizationService
+): TrelloClient {
+    val key = BuildConfig.TRELLO_API_KEY
+    val token = authorizationService.loadToken(context)!!
+    return TrelloClient(key, token)
+}
 
 class TrelloClient(key: String, token: String) {
     private val json: Json = Json { ignoreUnknownKeys = true }
@@ -33,6 +44,8 @@ class TrelloClient(key: String, token: String) {
                 protocol = URLProtocol.HTTPS
                 host = "api.trello.com"
                 path("1/")
+                parameters.append("key", key)
+                parameters.append("token", token)
             }
         }
     }
@@ -50,9 +63,9 @@ class TrelloClient(key: String, token: String) {
         return value
     }
 
-    suspend fun getAllBoards(memberId: String) =
+    suspend fun getAllBoards() =
         getList<TrelloBoard>(
-            "members/$memberId/boards",
+            "members/me/boards",
             "filter" to "open",
             "fields" to "id,name",
         )
