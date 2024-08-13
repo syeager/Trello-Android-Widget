@@ -1,12 +1,13 @@
 package com.yeager.trelloandroidwidget
 
-import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.CheckBox
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.yeager.trelloandroidwidget.databinding.CardListWidgetConfigureBinding
@@ -15,7 +16,6 @@ import com.yeager.trelloandroidwidget.trello.createTrelloClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 /**
@@ -39,8 +39,8 @@ class CardListWidgetConfigureActivity : AppCompatActivity() {
         }
     }
 
-    public override fun onCreate(icicle: Bundle?) {
-        super.onCreate(icicle)
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         context = this
 
@@ -50,6 +50,20 @@ class CardListWidgetConfigureActivity : AppCompatActivity() {
 
         binding = CardListWidgetConfigureBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val state = SaveState()
+
+        binding.saveListsButton.setOnClickListener {
+            saveState(context, appWidgetId, state)
+
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            updateAppWidget(context, appWidgetManager, appWidgetId)
+
+            val resultValue = Intent()
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            setResult(RESULT_OK, resultValue)
+            finish()
+        }
 
         lifecycleScope.launch {
             val token = authorizationService.loadToken(context)
@@ -78,6 +92,24 @@ class CardListWidgetConfigureActivity : AppCompatActivity() {
 
                     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                         println("selected ${boards[position]}")
+                        state.boardName = boards[position].name
+                        state.lists.clear()
+
+                        lifecycleScope.launch {
+                            println("fetching lists")
+                            val lists = trelloClient.getAllListsInBoard(boards[position].id)
+                            val listLayout = binding.listLayout
+                            listLayout.removeAllViews()
+                            lists.forEach { list ->
+                                val checkbox = CheckBox(context)
+                                checkbox.text = list.name
+                                checkbox.setOnCheckedChangeListener { _, b ->
+                                    if (b) state.lists.add(list)
+                                    else state.lists.remove(list)
+                                }
+                                listLayout.addView(checkbox)
+                            }
+                        }
                     }
                 }
             }
@@ -98,21 +130,4 @@ class CardListWidgetConfigureActivity : AppCompatActivity() {
             return
         }
     }
-}
-
-private const val PREFS_NAME = "com.yeager.trelloandroidwidget.CardListWidget"
-private const val PREF_PREFIX_KEY = "appwidget_"
-
-// Read the prefix from the SharedPreferences object for this widget.
-// If there is no preference saved, get the default from a resource
-internal fun loadTitlePref(context: Context, appWidgetId: Int): String {
-    val prefs = context.getSharedPreferences(PREFS_NAME, 0)
-    val titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null)
-    return titleValue ?: context.getString(R.string.appwidget_text)
-}
-
-internal fun deleteTitlePref(context: Context, appWidgetId: Int) {
-    val prefs = context.getSharedPreferences(PREFS_NAME, 0).edit()
-    prefs.remove(PREF_PREFIX_KEY + appWidgetId)
-    prefs.apply()
 }

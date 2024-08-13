@@ -24,7 +24,7 @@ class CardListWidget : AppWidgetProvider() {
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         // When the user deletes the widget, delete the preference associated with it.
         for (appWidgetId in appWidgetIds) {
-            deleteTitlePref(context, appWidgetId)
+            deleteState(context, appWidgetId)
         }
     }
 
@@ -42,11 +42,13 @@ internal fun updateAppWidget(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int
 ) {
-    val widgetText = loadTitlePref(context, appWidgetId)
-    // Construct the RemoteViews object
-    val views = RemoteViews(context.packageName, R.layout.card_list_widget)
-    views.setTextViewText(R.id.user_token_text, widgetText)
+    val state = loadState(context, appWidgetId)
 
-    // Instruct the widget manager to update the widget
+    val views = RemoteViews(context.packageName, R.layout.card_list_widget)
+    views.setTextViewText(
+        R.id.user_token_text,
+        "${state.boardName}:\n${state.lists.joinToString("\n") { it.name }}"
+    )
+
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }
