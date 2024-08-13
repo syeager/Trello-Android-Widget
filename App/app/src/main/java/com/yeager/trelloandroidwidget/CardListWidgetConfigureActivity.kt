@@ -5,17 +5,23 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.yeager.trelloandroidwidget.databinding.CardListWidgetConfigureBinding
 import com.yeager.trelloandroidwidget.trello.AuthorizationService
+import com.yeager.trelloandroidwidget.trello.createTrelloClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 /**
  * The configuration screen for the [CardListWidget] AppWidget.
  */
-class CardListWidgetConfigureActivity : Activity() {
+class CardListWidgetConfigureActivity : AppCompatActivity() {
     private val authorizationService = AuthorizationService()
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var binding: CardListWidgetConfigureBinding
@@ -45,18 +51,34 @@ class CardListWidgetConfigureActivity : Activity() {
         binding = CardListWidgetConfigureBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        runBlocking {
-            launch {
-                val token = authorizationService.loadToken(context)
-                if (token == null) {
-                    binding.authLayout.visibility = View.VISIBLE
-                    binding.configureLayout.visibility = View.GONE
+        lifecycleScope.launch {
+            val token = authorizationService.loadToken(context)
+            if (token == null) {
+                binding.authLayout.visibility = View.VISIBLE
+                binding.configureLayout.visibility = View.GONE
 
-                    binding.startAuthButton.setOnClickListener(onStartAuthClicked)
-                    binding.saveTokenButton.setOnClickListener(onSaveClicked)
-                } else {
-                    binding.authLayout.visibility = View.GONE
-                    binding.configureLayout.visibility = View.VISIBLE
+                binding.startAuthButton.setOnClickListener(onStartAuthClicked)
+                binding.saveTokenButton.setOnClickListener(onSaveClicked)
+            } else {
+                binding.authLayout.visibility = View.GONE
+                binding.configureLayout.visibility = View.VISIBLE
+
+                val trelloClient = createTrelloClient(context, authorizationService)
+                val boards = withContext(Dispatchers.IO) {
+                    trelloClient.getAllBoards()
+                }
+
+                val adapter = ArrayAdapter(context, android.R.layout.simple_list_item_1, boards.map { it.name })
+                val boardSpinner = binding.boardSpinner
+                boardSpinner.adapter = adapter
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+                boardSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        println("selected ${boards[position]}")
+                    }
                 }
             }
         }
