@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.yeager.trelloandroidwidget.trello.AuthorizationService
@@ -30,7 +31,7 @@ class CardListViewsViewsFactory(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         )
-    
+
     override fun onCreate() {
         runBlocking {
             trelloClient = createTrelloClient(context, AuthorizationService())
@@ -65,9 +66,18 @@ class CardListViewsViewsFactory(
     override fun getCount(): Int = cards.count()
 
     override fun getViewAt(p0: Int): RemoteViews {
-        val cardView = RemoteViews(context.packageName, R.layout.card)
-        cardView.setTextViewText(R.id.label, cards[p0].toString())
-        return cardView
+        val card = cards[p0]
+        return RemoteViews(context.packageName, R.layout.card).apply {
+            setTextViewText(R.id.card_label, card.toString())
+
+            val fillInIntent = Intent().apply {
+                Bundle().also { extras ->
+                    extras.putString(Intent.EXTRA_TEXT, card.cardUrl.toString())
+                    putExtras(extras)
+                }
+            }
+            setOnClickFillInIntent(R.id.card_label, fillInIntent)
+        }
     }
 
     override fun getLoadingView() = null

@@ -1,11 +1,13 @@
 package com.yeager.trelloandroidwidget
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.RemoteViews
+import android.widget.Toast
 
 /**
  * Implementation of App Widget functionality.
@@ -30,6 +32,14 @@ class CardListWidget : AppWidgetProvider() {
         }
     }
 
+    override fun onReceive(context: Context?, intent: Intent?) {
+        if (intent?.action == Intent.ACTION_VIEW) {
+            val cardUrl: String? = intent.getStringExtra(Intent.EXTRA_TEXT)
+            Toast.makeText(context, cardUrl, Toast.LENGTH_SHORT).show()
+        }
+        super.onReceive(context, intent)
+    }
+
     override fun onEnabled(context: Context) {
         // Enter relevant functionality for when the first widget is created
     }
@@ -52,6 +62,18 @@ internal fun updateAppWidget(
 
         setRemoteAdapter(R.id.card_list, intent)
     }
+
+    val toastPendingIntent: PendingIntent = Intent(
+        context,
+        CardListWidget::class.java
+    ).run {
+        action = Intent.ACTION_VIEW
+        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+
+        PendingIntent.getBroadcast(context, 0, this, PendingIntent.FLAG_MUTABLE)
+    }
+    views.setPendingIntentTemplate(R.id.card_list, toastPendingIntent)
 
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }
