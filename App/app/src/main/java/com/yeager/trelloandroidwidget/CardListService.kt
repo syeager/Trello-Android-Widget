@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class CardListService : RemoteViewsService() {
@@ -26,7 +27,7 @@ class CardListViewsViewsFactory(
 ) : RemoteViewsService.RemoteViewsFactory {
     private val cards: ArrayList<CardViewModel> = arrayListOf()
     private lateinit var trelloClient: TrelloClient
-    private var dateFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss[.SSS]Z")
+    private var dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS]'Z'")
 
     private val appWidgetId: Int =
         intent.getIntExtra(
@@ -54,7 +55,7 @@ class CardListViewsViewsFactory(
                         .map { c -> CardViewModel(
                             c.name,
                             Uri.parse(c.url),
-                            if (c.due != null) OffsetDateTime.parse(c.due, dateFormatter).toLocalDate() else null,
+                            if (c.due != null) ZonedDateTime.parse(c.due).toLocalDate() else null,
                             list.name
                         ) })
                 }

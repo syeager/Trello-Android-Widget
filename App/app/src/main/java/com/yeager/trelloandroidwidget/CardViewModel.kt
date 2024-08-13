@@ -9,5 +9,5 @@ data class CardViewModel(
     val dueDate: LocalDate?,
     val listName: String,
 ) {
-    override fun toString() = "[$dueDate] $cardName ($listName)"
+    override fun toString() = "$cardName\n  $dueDate $listName"
 }
