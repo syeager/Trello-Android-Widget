@@ -24,5 +24,4 @@ hs_err_pid*
 replay_pid*
 
 App/.idea/
-
-App/keystore.properties
+.idea/
