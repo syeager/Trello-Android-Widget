@@ -23,6 +23,7 @@ import kotlinx.coroutines.withContext
  */
 class CardListWidgetConfigureActivity : AppCompatActivity() {
     private val authorizationService = AuthorizationService()
+    private val state = SaveState()
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var binding: CardListWidgetConfigureBinding
     private lateinit var context: Context
@@ -31,18 +32,28 @@ class CardListWidgetConfigureActivity : AppCompatActivity() {
         authorizationService.openAuthPage(this)
     }
 
-    private val onSaveClicked = View.OnClickListener {
+    private val onTokenSaveClicked = View.OnClickListener {
         val token = binding.userTokenText.text.toString()
         CoroutineScope(Dispatchers.IO).launch {
             authorizationService.saveToken(context, token)
-            finish()
+            update()
         }
+    }
+
+    private val onListsSaveClicked = View.OnClickListener {
+        saveState(context, appWidgetId, state)
+
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        updateAppWidget(context, appWidgetManager, appWidgetId)
+
+        val resultValue = Intent()
+        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        setResult(RESULT_OK, resultValue)
+        finish()
     }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        context = this
 
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if the user presses the back button.
@@ -51,19 +62,11 @@ class CardListWidgetConfigureActivity : AppCompatActivity() {
         binding = CardListWidgetConfigureBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val state = SaveState()
+        update()
+    }
 
-        binding.saveListsButton.setOnClickListener {
-            saveState(context, appWidgetId, state)
-
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            updateAppWidget(context, appWidgetManager, appWidgetId)
-
-            val resultValue = Intent()
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            setResult(RESULT_OK, resultValue)
-            finish()
-        }
+    private fun update() {
+        context = this
 
         lifecycleScope.launch {
             val token = authorizationService.loadToken(context)
@@ -72,10 +75,12 @@ class CardListWidgetConfigureActivity : AppCompatActivity() {
                 binding.configureLayout.visibility = View.GONE
 
                 binding.startAuthButton.setOnClickListener(onStartAuthClicked)
-                binding.saveTokenButton.setOnClickListener(onSaveClicked)
+                binding.saveTokenButton.setOnClickListener(onTokenSaveClicked)
             } else {
                 binding.authLayout.visibility = View.GONE
                 binding.configureLayout.visibility = View.VISIBLE
+
+                binding.saveListsButton.setOnClickListener(onListsSaveClicked)
 
                 val trelloClient = createTrelloClient(context, authorizationService)
                 val boards = withContext(Dispatchers.IO) {
