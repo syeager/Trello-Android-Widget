@@ -19,6 +19,20 @@
             android:layout_height="wrap_content"
             android:text="@string/save_button" />
 
+        <com.google.android.material.chip.Chip
+            android:id="@+id/due_dates_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/render_due_dates" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/list_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/render_list_names" />
+
         <Spinner
             android:id="@+id/board_spinner"
             android:layout_width="match_parent"

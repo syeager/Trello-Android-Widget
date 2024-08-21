@@ -12,7 +12,9 @@ private const val PREF_PREFIX_KEY = "appwidget_"
 @Serializable
 data class SaveState(
     var boardName: String = "",
-    val lists: MutableList<TrelloList> = mutableListOf()
+    val lists: MutableList<TrelloList> = mutableListOf(),
+    var showDueDates: Boolean = true,
+    var showListNames: Boolean = true,
 )
 
 internal fun saveState(context: Context, appWidgetId: Int, state: SaveState) {

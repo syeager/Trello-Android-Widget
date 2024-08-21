@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.CheckBox
+import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.yeager.trelloandroidwidget.databinding.CardListWidgetConfigureBinding
@@ -54,6 +55,12 @@ class CardListWidgetConfigureActivity : AppCompatActivity() {
                 // TODO: Change to main activity.
             } else {
                 binding.saveListsButton.setOnClickListener(onListsSaveClicked)
+                binding.dueDatesToggle.setOnCheckedChangeListener { _, value ->
+                    state.showDueDates = value
+                }
+                binding.listToggle.setOnCheckedChangeListener { _, value ->
+                    state.showListNames = value
+                }
 
                 val trelloClient = createTrelloClient(context, authorizationService)
                 val boards = withContext(Dispatchers.IO) {

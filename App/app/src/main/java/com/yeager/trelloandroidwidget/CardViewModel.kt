@@ -9,5 +9,21 @@ data class CardViewModel(
     val dueDate: LocalDate?,
     val listName: String,
 ) {
-    override fun toString() = "$cardName\n  $dueDate $listName"
+    fun render(showDueDate: Boolean, showListName: Boolean): String {
+        var value = cardName
+        if (!showDueDate && !showListName) {
+            return value
+        }
+
+        value += "\n  "
+        if (showDueDate) {
+            value += "${dueDate ?: "----"} "
+        }
+
+        if (showListName) {
+            value += listName
+        }
+
+        return value
+    }
 }

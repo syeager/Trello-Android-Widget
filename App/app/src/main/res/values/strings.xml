@@ -9,4 +9,6 @@
     <string name="save_button">Save</string>
     <string name="authorize">Authorize</string>
     <string name="log_out">Log Out</string>
+    <string name="render_due_dates">Show Due Dates</string>
+    <string name="render_list_names">Show List Names</string>
 </resources>

@@ -25,6 +25,7 @@ class CardListViewsViewsFactory(
 ) : RemoteViewsService.RemoteViewsFactory {
     private val cards: ArrayList<CardViewModel> = arrayListOf()
     private lateinit var trelloClient: TrelloClient
+    private lateinit var saveState: SaveState
 
     private val appWidgetId: Int =
         intent.getIntExtra(
@@ -35,6 +36,7 @@ class CardListViewsViewsFactory(
     override fun onCreate() {
         runBlocking {
             trelloClient = createTrelloClient(context, AuthorizationService())
+            saveState = loadState(context, appWidgetId)
         }
     }
 
@@ -68,7 +70,8 @@ class CardListViewsViewsFactory(
     override fun getViewAt(p0: Int): RemoteViews {
         val card = cards[p0]
         return RemoteViews(context.packageName, R.layout.card).apply {
-            setTextViewText(R.id.card_label, card.toString())
+            setTextViewText(R.id.card_label,
+                card.render(saveState.showDueDates, saveState.showListNames))
 
             val fillInIntent = Intent().apply {
                 Bundle().also { extras ->
