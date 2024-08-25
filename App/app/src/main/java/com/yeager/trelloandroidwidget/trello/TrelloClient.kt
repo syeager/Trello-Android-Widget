@@ -75,4 +75,9 @@ class TrelloClient(key: String, token: String) {
 
     suspend fun getAllCardsInList(listId: String) =
         getList<TrelloCard>("lists/$listId/cards")
+
+    suspend fun getMember(): TrelloMember {
+        val response = client.get("members/me")
+        return response.body<TrelloMember>()
+    }
 }

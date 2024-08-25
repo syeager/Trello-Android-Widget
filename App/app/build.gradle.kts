@@ -59,13 +59,17 @@ android {
 }
 
 dependencies {
-    //noinspection UseTomlInstead
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
-    implementation("org.slf4j:slf4j-android:1.7.36")
-    implementation("io.ktor:ktor-client-logging:2.3.12")
-    implementation("org.slf4j:slf4j-simple:2.0.16")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.slf4j.android)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.slf4j.simple)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

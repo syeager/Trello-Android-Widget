@@ -38,4 +38,8 @@ class AuthorizationService {
 
         return token
     }
+
+    suspend fun clearToken(context: Context) {
+        context.dataStore.edit { settings -> settings.remove(TOKEN) }
+    }
 }
