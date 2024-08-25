@@ -14,5 +14,10 @@ data class TrelloCard(
     val name: String,
     val url: String,
     val due: String?,
-    val subscribed: Boolean
+    val subscribed: Boolean,
+)
+
+@Serializable
+data class TrelloMember(
+    val username: String,
 )

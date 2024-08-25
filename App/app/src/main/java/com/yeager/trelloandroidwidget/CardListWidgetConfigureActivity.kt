@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import com.yeager.trelloandroidwidget.databinding.CardListWidgetConfigureBinding
 import com.yeager.trelloandroidwidget.trello.AuthorizationService
 import com.yeager.trelloandroidwidget.trello.createTrelloClient
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -25,20 +24,7 @@ class CardListWidgetConfigureActivity : AppCompatActivity() {
     private val authorizationService = AuthorizationService()
     private val state = SaveState()
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
-    private lateinit var binding: CardListWidgetConfigureBinding
-    private lateinit var context: Context
-
-    private val onStartAuthClicked = View.OnClickListener {
-        authorizationService.openAuthPage(this)
-    }
-
-    private val onTokenSaveClicked = View.OnClickListener {
-        val token = binding.userTokenText.text.toString()
-        CoroutineScope(Dispatchers.IO).launch {
-            authorizationService.saveToken(context, token)
-            update()
-        }
-    }
+    private val context: Context = this
 
     private val onListsSaveClicked = View.OnClickListener {
         saveState(context, appWidgetId, state)
@@ -59,27 +45,14 @@ class CardListWidgetConfigureActivity : AppCompatActivity() {
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED)
 
-        binding = CardListWidgetConfigureBinding.inflate(layoutInflater)
+        val binding = CardListWidgetConfigureBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        update()
-    }
-
-    private fun update() {
-        context = this
 
         lifecycleScope.launch {
             val token = authorizationService.loadToken(context)
             if (token == null) {
-                binding.authLayout.visibility = View.VISIBLE
-                binding.configureLayout.visibility = View.GONE
-
-                binding.startAuthButton.setOnClickListener(onStartAuthClicked)
-                binding.saveTokenButton.setOnClickListener(onTokenSaveClicked)
+                // TODO: Change to main activity.
             } else {
-                binding.authLayout.visibility = View.GONE
-                binding.configureLayout.visibility = View.VISIBLE
-
                 binding.saveListsButton.setOnClickListener(onListsSaveClicked)
 
                 val trelloClient = createTrelloClient(context, authorizationService)

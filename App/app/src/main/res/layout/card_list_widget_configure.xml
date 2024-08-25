@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_height="match_parent"
     android:padding="16dp">
 
     <LinearLayout
         android:id="@+id/configure_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/configure_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/configure" />
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Button
             android:id="@+id/save_lists_button"
@@ -26,7 +22,8 @@
         <Spinner
             android:id="@+id/board_spinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="50dp"
+            android:spinnerMode="dialog" />
 
         <LinearLayout
             android:id="@+id/list_layout"
@@ -34,40 +31,4 @@
             android:layout_height="match_parent"
             android:orientation="vertical" />
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/auth_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:labelFor="@id/user_token_text"
-            android:text="@string/authorize" />
-
-        <EditText
-            android:id="@+id/user_token_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/user_token_hint"
-            android:inputType="text" />
-
-        <Button
-            android:id="@+id/start_auth_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/start_auth" />
-
-        <Button
-            android:id="@+id/save_token_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/save_button" />
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
